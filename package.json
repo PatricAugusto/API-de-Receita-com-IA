@@ -1,20 +1,21 @@
 {
   "name": "api-receitas",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API de receitas com IA usando Node.js, Express e Groq",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["api", "receitas", "ia", "nodejs", "express", "groq"],
+  "author": "Patric Augusto",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.78.0",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "groq-sdk": "^1.1.1",
-    "openai": "^6.29.0"
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0",
+    "groq-sdk": "^0.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }

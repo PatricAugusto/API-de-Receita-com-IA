@@ -15,7 +15,7 @@ app.use('/api', routes);
 
 // Rota raiz para confirmar que o servidor está vivo
 app.get('/', (req, res) => {
-  res.json({ mensagem: '🍽️ API de Receitas com IA está rodando!' });
+  res.json({ mensagem: '🍽️ API de Receitas com IA está rodando! [nodemon nativo]' });
 });
 
 app.listen(PORT, () => {
