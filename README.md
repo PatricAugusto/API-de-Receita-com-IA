@@ -1,12 +1,12 @@
 # 🍽️ API de Receitas com IA
 
-API REST desenvolvida com Node.js e Express que utiliza a inteligência artificial da OpenAI para sugerir receitas com base nos ingredientes que o usuário tem disponíveis.
+API REST desenvolvida com Node.js e Express que utiliza inteligência artificial para sugerir receitas com base nos ingredientes que o usuário tem disponíveis.
 
 ## 🚀 Tecnologias utilizadas
 
 - **Node.js** — ambiente de execução JavaScript
 - **Express** — framework para criação do servidor e rotas
-- **OpenAI API** — IA para geração das receitas (modelo gpt-4o-mini)
+- **Groq API** — IA para geração das receitas (modelo llama-3.3-70b-versatile)
 - **dotenv** — gerenciamento seguro de variáveis de ambiente
 
 ## 📁 Estrutura do projeto
@@ -15,10 +15,11 @@ api-receitas/
 ├── src/
 │   ├── server.js              # Ponto de entrada, configuração do servidor
 │   ├── routes.js              # Definição das rotas da API
-│   ├── receitaController.js   # Lógica de negócio e integração com OpenAI
+│   ├── receitaController.js   # Lógica de negócio e integração com Groq
 │   └── validacoes.js          # Regras de validação das requisições
 ├── .env                       # Variáveis de ambiente (não versionado)
 ├── .gitignore
+├── exemplos.http              # Exemplos de requisições para REST Client
 ├── package.json
 └── README.md
 ```
@@ -28,7 +29,7 @@ api-receitas/
 ### Pré-requisitos
 
 - Node.js v18 ou superior
-- Uma chave de API da OpenAI ([obter aqui](https://platform.openai.com/api-keys))
+- Uma chave de API do Groq — gratuita em [console.groq.com](https://console.groq.com)
 
 ### Instalação
 
@@ -45,7 +46,7 @@ npm install
 
 3. Crie o arquivo `.env` na raiz do projeto:
 ```env
-OPENAI_API_KEY=sk-sua-chave-aqui
+GROQ_API_KEY=gsk_sua-chave-aqui
 PORT=3000
 ```
 
@@ -82,11 +83,11 @@ Content-Type: application/json
 
 **Body (JSON):**
 
-| Campo          | Tipo     | Obrigatório | Descrição                                              |
-|----------------|----------|-------------|--------------------------------------------------------|
-| `ingredientes` | array    | ✅ Sim      | Lista de ingredientes disponíveis (máx. 20)            |
-| `filtro`       | string   | ❌ Não      | Restrição alimentar (ver opções abaixo)                |
-| `quantidade`   | number   | ❌ Não      | Quantidade de receitas sugeridas, entre 1 e 5 (padrão: 3) |
+| Campo          | Tipo   | Obrigatório | Descrição                                                 |
+|----------------|--------|-------------|-----------------------------------------------------------|
+| `ingredientes` | array  | ✅ Sim      | Lista de ingredientes disponíveis (máx. 20)               |
+| `filtro`       | string | ❌ Não      | Restrição alimentar (ver opções abaixo)                   |
+| `quantidade`   | number | ❌ Não      | Quantidade de receitas sugeridas, entre 1 e 5 (padrão: 3) |
 
 **Filtros disponíveis:**
 - `vegetariano`
@@ -142,5 +143,10 @@ Content-Type: application/json
 
 ## 🔒 Segurança
 
-- A chave da OpenAI é armazenada em variável de ambiente e **nunca** versionada no Git
+- A chave do Groq é armazenada em variável de ambiente e **nunca** versionada no Git
 - O arquivo `.env` está listado no `.gitignore`
+
+## 🐛 Histórico de decisões técnicas
+
+- **OpenAI → Anthropic → Groq:** as duas primeiras opções exigem créditos pagos mesmo em contas novas. Optamos pelo Groq por oferecer tier gratuito generoso para desenvolvimento e testes
+- **dotenv.config() antes da instância do cliente:** o cliente de IA deve ser instanciado dentro da função e não no topo do arquivo, garantindo que as variáveis de ambiente já foram carregadas
