@@ -1,0 +1,68 @@
+### Verificar se a API está rodando
+GET http://localhost:3000
+
+###
+
+### Requisição básica com ingredientes
+POST http://localhost:3000/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["ovo", "farinha", "leite", "manteiga"]
+}
+
+###
+
+### Receitas veganas
+POST http://localhost:3000/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["tomate", "abobrinha", "alho", "azeite"],
+  "filtro": "vegano",
+  "quantidade": 2
+}
+
+###
+
+### Receitas sem glúten
+POST http://localhost:3000/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["frango", "batata", "cebola", "alho"],
+  "filtro": "sem glúten",
+  "quantidade": 1
+}
+
+###
+
+### Teste de erro — array vazio
+POST http://localhost:3000/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": []
+}
+
+###
+
+### Teste de erro — filtro inválido
+POST http://localhost:3000/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["ovo"],
+  "filtro": "kosher"
+}
+
+###
+
+### Teste de erro — quantidade fora do limite
+POST http://localhost:3000/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["ovo", "leite"],
+  "quantidade": 10
+}
