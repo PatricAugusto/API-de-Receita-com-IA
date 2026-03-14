@@ -1,9 +1,9 @@
-### Verificar se a API está rodando
+### Verificar se a API está rodando (local)
 GET http://localhost:3000
 
 ###
 
-### Requisição básica com ingredientes
+### Requisição básica com ingredientes (local)
 POST http://localhost:3000/api/receitas
 Content-Type: application/json
 
@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ###
 
-### Receitas veganas
+### Receitas veganas (local)
 POST http://localhost:3000/api/receitas
 Content-Type: application/json
 
@@ -25,7 +25,7 @@ Content-Type: application/json
 
 ###
 
-### Receitas sem glúten
+### Receitas sem glúten (local)
 POST http://localhost:3000/api/receitas
 Content-Type: application/json
 
@@ -37,7 +37,7 @@ Content-Type: application/json
 
 ###
 
-### Teste de erro — array vazio
+### Teste de erro — array vazio (local)
 POST http://localhost:3000/api/receitas
 Content-Type: application/json
 
@@ -47,7 +47,7 @@ Content-Type: application/json
 
 ###
 
-### Teste de erro — filtro inválido
+### Teste de erro — filtro inválido (local)
 POST http://localhost:3000/api/receitas
 Content-Type: application/json
 
@@ -58,11 +58,54 @@ Content-Type: application/json
 
 ###
 
-### Teste de erro — quantidade fora do limite
+### Teste de erro — quantidade fora do limite (local)
 POST http://localhost:3000/api/receitas
 Content-Type: application/json
 
 {
   "ingredientes": ["ovo", "leite"],
   "quantidade": 10
+}
+
+###
+
+### ==========================================
+### PRODUCAO
+### ==========================================
+
+### [PRODUCAO] Verificar se a API está rodando
+GET https://api-de-receita-com-ia.vercel.app/
+
+###
+
+### [PRODUCAO] Requisição básica
+POST https://api-de-receita-com-ia.vercel.app/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["ovo", "farinha", "leite", "manteiga"]
+}
+
+###
+
+### [PRODUCAO] Receitas veganas
+POST https://api-de-receita-com-ia.vercel.app/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["tomate", "abobrinha", "alho", "azeite"],
+  "filtro": "vegano",
+  "quantidade": 2
+}
+
+###
+
+### [PRODUCAO] Receitas sem glúten
+POST https://api-de-receita-com-ia.vercel.app/api/receitas
+Content-Type: application/json
+
+{
+  "ingredientes": ["frango", "batata", "cebola", "alho"],
+  "filtro": "sem glúten",
+  "quantidade": 1
 }
