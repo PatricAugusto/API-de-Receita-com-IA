@@ -1,25 +1,22 @@
 const OpenAI = require("openai");
+const {validarBodyReceitas} = require('./validacoes');
 
 const sugerirReceitas = async (req, res) => {
   try {
+    const erros = validarBodyReceitas(req.body);
+    if(erro.length > 0){
+      return res.status(400).json({ erros });
+    }
+
     const client = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
     });
 
-    const { ingredientes } = req.body;
+    const { ingredientes, filtro, quantidade = 3 } = req.body;
 
-    // Validação básica
-    if (
-      !ingredientes ||
-      !Array.isArray(ingredientes) ||
-      ingredientes.length === 0
-    ) {
-      return res.status(400).json({
-        erro: 'Informe ao menos um ingrediente no campo "ingredientes" (array de strings).',
-      });
-    }
+    const listaIngredientes = ingredientes.map((i) => i.trim()).join(', ');
 
-    const listaIngredientes = ingredientes.join(", ");
+    const restricao = filtro ? `As receitas devem ser ${filtro}.` : '';
 
     // Prompt enviado para a OpenAI
     const prompt = `Você é um chef de cozinha experiente e criativo.
@@ -35,7 +32,7 @@ const sugerirReceitas = async (req, res) => {
     const resposta = await client.chat.completions.create({
       model: "gpt-4o-mini", // modelo mais econômico e muito capaz
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1500,
+      max_tokens: 2000,
       temperature: 0.7, // criatividade moderada
     });
 
@@ -43,12 +40,27 @@ const sugerirReceitas = async (req, res) => {
 
     return res.status(200).json({
       ingredientes_informados: ingredientes,
+      filtro: filtro || null,
+      quantidade_solicitada: quantidade,
       receitas,
     });
   } catch (erro) {
-    console.error("Erro ao chamar a OpenAI:", erro.message);
+    // Erro especifico de auth da OpenAi
+    if(erro.status === 401){
+      return res.status(500).json({
+        erro: 'Chave da OpenAi inválida ou expirada. Verifique o arquivo .env.',
+      });
+    }
+
+    if(erro.status === 429){
+      return res.status(429).json({
+        erro: 'Limite de requisições da OpenAi atingido. Tente novamente em instantes.',
+      }); 
+    }
+
+    console.error('Error ao chamar a OpenAI:', erro.message);
     return res.status(500).json({
-      erro: "Erro interno ao gerar receitas. Tente novamente.",
+      erro: 'Erro interno ao gerar receitas. Tente Novamente',
     });
   }
 };
