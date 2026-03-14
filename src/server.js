@@ -15,9 +15,14 @@ app.use('/api', routes);
 
 // Rota raiz para confirmar que o servidor está vivo
 app.get('/', (req, res) => {
-  res.json({ mensagem: '🍽️ API de Receitas com IA está rodando! [nodemon nativo]' });
+  res.json({ mensagem: '🍽️ API de Receitas com IA está rodando!' });
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-});
+module.exports = app;
+
+// Mantém o listen para rodar localmente com npm run dev
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+  });
+}
