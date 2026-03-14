@@ -1,39 +1,42 @@
-const OpenAI = require("openai");
-const {validarBodyReceitas} = require('./validacoes');
+const Groq = require('groq-sdk');
+const { validarBodyReceitas } = require('./validacoes');
 
 const sugerirReceitas = async (req, res) => {
   try {
     const erros = validarBodyReceitas(req.body);
-    if(erro.length > 0){
+    if (erros.length > 0) {
       return res.status(400).json({ erros });
     }
 
-    const client = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+    const client = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
     });
 
     const { ingredientes, filtro, quantidade = 3 } = req.body;
 
-    const listaIngredientes = ingredientes.map((i) => i.trim()).join(', ');
+    const listaIngredientes = ingredientes
+      .map((i) => i.trim())
+      .join(', ');
 
     const restricao = filtro ? `As receitas devem ser ${filtro}.` : '';
 
-    // Prompt enviado para a OpenAI
-    const prompt = `Você é um chef de cozinha experiente e criativo.
-    O usuário tem os seguintes ingredientes disponíveis: ${listaIngredientes}.
-    Sugira 3 receitas práticas que podem ser feitas com esses ingredientes.
-    Para cada receita, forneça:
+    const prompt = `Voce e um chef de cozinha experiente e criativo.
+    O usuario tem os seguintes ingredientes disponiveis: ${listaIngredientes}.
+    ${restricao}
+    Sugira ${quantidade} receitas praticas que podem ser feitas com esses ingredientes.
+    Para cada receita, forneca:
     1. Nome da receita
-    2. Ingredientes necessários (destacando quais o usuário já tem)
+    2. Ingredientes necessarios (destacando quais o usuario ja tem)
     3. Modo de preparo passo a passo
     4. Tempo estimado de preparo
-    Responda em português brasileiro de forma clara e organizada.`;
+    5. Nivel de dificuldade (facil, medio ou dificil)
+    Responda em portugues brasileiro de forma clara e organizada.`;
 
     const resposta = await client.chat.completions.create({
-      model: "gpt-4o-mini", // modelo mais econômico e muito capaz
-      messages: [{ role: "user", content: prompt }],
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
       max_tokens: 2000,
-      temperature: 0.7, // criatividade moderada
+      temperature: 0.7,
     });
 
     const receitas = resposta.choices[0].message.content;
@@ -44,23 +47,25 @@ const sugerirReceitas = async (req, res) => {
       quantidade_solicitada: quantidade,
       receitas,
     });
+
   } catch (erro) {
-    // Erro especifico de auth da OpenAi
-    if(erro.status === 401){
+    console.error('Erro ao chamar o Groq:', erro.message);
+    console.error('Status:', erro.status);
+
+    if (erro.status === 401) {
       return res.status(500).json({
-        erro: 'Chave da OpenAi inválida ou expirada. Verifique o arquivo .env.',
+        erro: 'Chave do Groq invalida ou expirada. Verifique o arquivo .env.',
       });
     }
 
-    if(erro.status === 429){
+    if (erro.status === 429) {
       return res.status(429).json({
-        erro: 'Limite de requisições da OpenAi atingido. Tente novamente em instantes.',
-      }); 
+        erro: 'Limite de requisicoes do Groq atingido. Tente novamente em instantes.',
+      });
     }
 
-    console.error('Error ao chamar a OpenAI:', erro.message);
     return res.status(500).json({
-      erro: 'Erro interno ao gerar receitas. Tente Novamente',
+      erro: 'Erro interno ao gerar receitas. Tente novamente.',
     });
   }
 };
