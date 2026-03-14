@@ -1,11 +1,11 @@
 const OpenAI = require("openai");
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 const sugerirReceitas = async (req, res) => {
   try {
+    const client = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const { ingredientes } = req.body;
 
     // Validação básica
